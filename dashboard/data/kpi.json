@@ -1,0 +1,12 @@
+[{"report_date":"2026-09-01","sort_order":1,"metric":"portfolio","label":"Портфель, млрд ₸","value":498.1532286946000000,"change":null,"unit":"bn"}, 
+ {"report_date":"2026-09-01","sort_order":2,"metric":"par30","label":"PAR30","value":0.12049406008282420658,"change":null,"unit":"share"}, 
+ {"report_date":"2026-09-01","sort_order":3,"metric":"par90","label":"PAR90","value":0.06242624320199874620,"change":null,"unit":"share"}, 
+ {"report_date":"2026-09-01","sort_order":4,"metric":"npl","label":"NPL","value":0.11850843611254093946,"change":null,"unit":"share"}, 
+ {"report_date":"2026-09-01","sort_order":5,"metric":"top10","label":"Топ-10 групп","value":0.17042705087008162570,"change":null,"unit":"share"}, 
+ {"report_date":"2026-09-01","sort_order":6,"metric":"provisions","label":"Провизии, млрд ₸","value":36.5122590664100000,"change":null,"unit":"bn"}, 
+ {"report_date":"2026-10-01","sort_order":1,"metric":"portfolio","label":"Портфель, млрд ₸","value":484.6747708329500000,"change":-13.4784578616500000,"unit":"bn"}, 
+ {"report_date":"2026-10-01","sort_order":2,"metric":"par30","label":"PAR30","value":0.10326384047547262276,"change":-0.01723021960735158382,"unit":"share"}, 
+ {"report_date":"2026-10-01","sort_order":3,"metric":"par90","label":"PAR90","value":0.04464694627680191832,"change":-0.01777929692519682788,"unit":"share"}, 
+ {"report_date":"2026-10-01","sort_order":4,"metric":"npl","label":"NPL","value":0.10013577438462890636,"change":-0.01837266172791203310,"unit":"share"}, 
+ {"report_date":"2026-10-01","sort_order":5,"metric":"top10","label":"Топ-10 групп","value":0.17016799337340907991,"change":-0.00025905749667254579,"unit":"share"}, 
+ {"report_date":"2026-10-01","sort_order":6,"metric":"provisions","label":"Провизии, млрд ₸","value":31.1712414084700000,"change":-5.3410176579400000,"unit":"bn"}]

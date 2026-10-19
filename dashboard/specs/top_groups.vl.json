@@ -1,0 +1,40 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Концентрация: топ-10 групп связанных заёмщиков на последний срез. Источник: reporting.v_top_groups",
+  "title": {"text": "Топ-10 групп связанных заёмщиков, доля в портфеле, последний срез", "anchor": "start", "fontSize": 13},
+  "data": {"url": "data/top_groups.json"},
+  "transform": [
+    {"calculate": "toDate(datum.report_date)", "as": "dt"},
+    {"joinaggregate": [{"op": "max", "field": "dt", "as": "last_dt"}]},
+    {"filter": "datum.dt == datum.last_dt"},
+    {"calculate": "datum.has_npl ? 'Есть NPL' : 'Без NPL'", "as": "npl_label"},
+    {"calculate": "datum.group_kzt / 1e9", "as": "bn"}
+  ],
+  "width": 620,
+  "height": 230,
+  "layer": [
+    {
+      "mark": {"type": "bar"},
+      "encoding": {
+        "y": {"field": "group_id", "type": "nominal", "title": null, "sort": {"field": "rank", "order": "ascending"}},
+        "x": {"field": "share", "type": "quantitative", "title": null, "axis": {"format": ".1%"}},
+        "color": {"field": "npl_label", "title": null, "scale": {"domain": ["Без NPL", "Есть NPL"], "range": ["#3d5a73", "#a8443a"]}},
+        "tooltip": [
+          {"field": "group_id", "title": "Группа"},
+          {"field": "loans", "title": "Кредитов"},
+          {"field": "bn", "title": "млрд ₸", "format": ",.2f"},
+          {"field": "share", "title": "Доля", "format": ".2%"},
+          {"field": "npl_label", "title": "NPL"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "text", "align": "left", "dx": 4, "fontSize": 10, "color": "#333"},
+      "encoding": {
+        "y": {"field": "group_id", "type": "nominal", "sort": {"field": "rank", "order": "ascending"}},
+        "x": {"field": "share", "type": "quantitative"},
+        "text": {"field": "share", "format": ".2%"}
+      }
+    }
+  ]
+}

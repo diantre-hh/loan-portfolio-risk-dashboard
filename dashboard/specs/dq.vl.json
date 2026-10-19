@@ -1,0 +1,46 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Чувствительность PAR90 и NPL к подозрительным переходам между срезами. Источники: reporting.v_dq_sensitivity, reporting.v_portfolio_metrics",
+  "title": {
+    "text": "PAR90 и NPL: как в отчёте и если подозрительные переходы не подтвердятся",
+    "subtitle": "23 кредита вернулись в портфель после списания, у 53 просрочка 90+ обнулилась без реструктуризации (см. reporting.v_dq_transitions)",
+    "anchor": "start", "fontSize": 13, "subtitleColor": "#5b6b78"
+  },
+  "data": {"url": "data/dq_sensitivity.json"},
+  "transform": [
+    {"calculate": "timeFormat(toDate(datum.report_date), '%d.%m.%Y')", "as": "date_label"},
+    {"fold": ["par90_share", "par90_share_adj", "npl_share", "npl_share_adj"], "as": ["key", "share"]},
+    {"calculate": "indexof(datum.key, 'npl') == 0 ? 'NPL' : 'PAR90'", "as": "metric"},
+    {"calculate": "indexof(datum.key, '_adj') > 0 ? 'Без подозрительных переходов' : 'Как в отчёте'", "as": "variant"}
+  ],
+  "facet": {"column": {"field": "metric", "title": null, "sort": ["PAR90", "NPL"], "header": {"labelFontSize": 12, "labelAnchor": "start"}}},
+  "spec": {
+    "width": 260,
+    "height": 200,
+    "layer": [
+      {
+        "mark": {"type": "line", "point": true},
+        "encoding": {
+          "x": {"field": "date_label", "type": "ordinal", "title": null, "axis": {"labelAngle": 0}},
+          "y": {"field": "share", "type": "quantitative", "title": null, "axis": {"format": ".0%"}, "scale": {"zero": true}},
+          "color": {"field": "variant", "title": null, "scale": {"domain": ["Как в отчёте", "Без подозрительных переходов"], "range": ["#3d5a73", "#a8443a"]}},
+          "strokeDash": {"field": "variant", "legend": null, "scale": {"domain": ["Как в отчёте", "Без подозрительных переходов"], "range": [[1, 0], [5, 3]]}},
+          "tooltip": [
+            {"field": "date_label", "title": "Срез"},
+            {"field": "variant", "title": "Вариант"},
+            {"field": "share", "title": "Доля", "format": ".2%"}
+          ]
+        }
+      },
+      {
+        "mark": {"type": "text", "dy": -10, "fontSize": 10},
+        "encoding": {
+          "x": {"field": "date_label", "type": "ordinal"},
+          "y": {"field": "share", "type": "quantitative"},
+          "text": {"field": "share", "format": ".1%"},
+          "color": {"field": "variant", "legend": null, "scale": {"domain": ["Как в отчёте", "Без подозрительных переходов"], "range": ["#3d5a73", "#a8443a"]}}
+        }
+      }
+    ]
+  }
+}

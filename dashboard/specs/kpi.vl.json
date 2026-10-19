@@ -1,0 +1,38 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "KPI на последнюю дату среза и изменение к предыдущему срезу. Источник: reporting.v_kpi",
+  "data": {"url": "data/kpi.json"},
+  "transform": [
+    {"calculate": "toDate(datum.report_date)", "as": "dt"},
+    {"joinaggregate": [{"op": "max", "field": "dt", "as": "last_dt"}]},
+    {"filter": "datum.dt == datum.last_dt"},
+    {"calculate": "datum.unit == 'bn' ? format(datum.value, ',.1f') : format(datum.value, '.1%')", "as": "value_txt"},
+    {"calculate": "datum.change == null ? '' : (datum.unit == 'bn' ? format(datum.change, '+,.1f') + ' млрд' : format(datum.change * 100, '+.1f') + ' п.п.') + ' к пред. срезу'", "as": "change_txt"}
+  ],
+  "facet": {
+    "column": {
+      "field": "label",
+      "sort": {"field": "sort_order", "op": "min"},
+      "header": {"title": null, "labelFontSize": 12, "labelColor": "#555", "labelAlign": "left", "labelAnchor": "start"}
+    }
+  },
+  "spacing": 12,
+  "spec": {
+    "width": 140,
+    "height": 64,
+    "layer": [
+      {
+        "mark": {"type": "text", "align": "left", "fontSize": 26, "fontWeight": 600, "color": "#1f2933", "x": 0, "y": 22},
+        "encoding": {"text": {"field": "value_txt"}}
+      },
+      {
+        "mark": {"type": "text", "align": "left", "fontSize": 11, "x": 0, "y": 52},
+        "encoding": {
+          "text": {"field": "change_txt"},
+          "color": {"condition": {"test": "datum.unit == 'share' && datum.change > 0", "value": "#b5473a"}, "value": "#5b6b78"}
+        }
+      }
+    ]
+  },
+  "config": {"view": {"stroke": "#e3e7eb"}}
+}

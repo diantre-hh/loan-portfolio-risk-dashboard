@@ -1,0 +1,62 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Разрез по программе: структура по корзинам просрочки на последний срез и NPL на обе даты. Источники: reporting.v_buckets_by_dim, reporting.v_metrics_by_dim",
+  "hconcat": [
+    {
+      "title": {"text": "Портфель по корзинам просрочки, последний срез, млрд ₸", "anchor": "start", "fontSize": 13},
+      "data": {"url": "data/buckets_by_dim.json"},
+      "transform": [
+        {"filter": "datum.dimension == 'program'"},
+        {"calculate": "toDate(datum.report_date)", "as": "dt"},
+        {"joinaggregate": [{"op": "max", "field": "dt", "as": "last_dt"}]},
+        {"filter": "datum.dt == datum.last_dt"},
+        {"calculate": "datum.portfolio_kzt / 1e9", "as": "bn"},
+        {"calculate": "slice(datum.dpd_bucket, 3)", "as": "bucket_label"}
+      ],
+      "width": 280,
+      "height": 230,
+      "mark": {"type": "bar"},
+      "encoding": {
+        "y": {"field": "dim_value", "type": "nominal", "title": null, "sort": {"op": "sum", "field": "bn", "order": "descending"}},
+        "x": {"field": "bn", "type": "quantitative", "title": null, "axis": {"format": ",.0f"}},
+        "color": {
+          "field": "bucket_label",
+          "title": "Корзина",
+          "sort": ["Без просрочки", "1–30 дней", "31–90 дней", "NPL"],
+          "scale": {"domain": ["Без просрочки", "1–30 дней", "31–90 дней", "NPL"], "range": ["#c9d3dc", "#e3c886", "#d58c55", "#a8443a"]}
+        },
+        "order": {"field": "dpd_bucket", "sort": "ascending"},
+        "tooltip": [
+          {"field": "dim_value", "title": "Программа"},
+          {"field": "bucket_label", "title": "Корзина"},
+          {"field": "bn", "title": "млрд ₸", "format": ",.2f"}
+        ]
+      }
+    },
+    {
+      "title": {"text": "NPL по программе", "anchor": "start", "fontSize": 13},
+      "data": {"url": "data/metrics_by_dim.json"},
+      "transform": [
+        {"filter": "datum.dimension == 'program'"},
+        {"calculate": "timeFormat(toDate(datum.report_date), '%d.%m.%Y')", "as": "date_label"}
+      ],
+      "width": 200,
+      "height": 230,
+      "mark": {"type": "bar"},
+      "encoding": {
+        "y": {"field": "dim_value", "type": "nominal", "title": null, "sort": {"op": "max", "field": "npl_share", "order": "descending"}},
+        "yOffset": {"field": "date_label"},
+        "x": {"field": "npl_share", "type": "quantitative", "title": null, "axis": {"format": ".0%"}},
+        "color": {"field": "date_label", "title": "Срез", "scale": {"range": ["#b8c4ce", "#3d5a73"]}},
+        "tooltip": [
+          {"field": "dim_value", "title": "Программа"},
+          {"field": "date_label", "title": "Срез"},
+          {"field": "npl_share", "title": "NPL", "format": ".2%"},
+          {"field": "par90_share", "title": "PAR90", "format": ".2%"},
+          {"field": "par30_share", "title": "PAR30", "format": ".2%"}
+        ]
+      }
+    }
+  ],
+  "resolve": {"scale": {"color": "independent"}}
+}

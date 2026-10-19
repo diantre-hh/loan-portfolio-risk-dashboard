@@ -1,0 +1,40 @@
+# Концентрация: десять крупнейших групп связанных заёмщиков на каждую дату.
+model: top_groups
+label: Топ-10 групп связанных заёмщиков
+source: reporting.v_top_groups
+grain: [report_date, group_id]
+
+dimensions:
+  - name: report_date
+    column: report_date
+    type: date
+    label: Дата среза
+  - name: group_id
+    column: group_id
+    type: string
+    label: Группа
+  - name: rank
+    column: rank
+    type: number
+    label: Место по остатку
+  - name: has_npl
+    column: has_npl
+    type: boolean
+    label: Есть NPL в группе
+
+measures:
+  - name: group_kzt
+    column: group_kzt
+    type: sum
+    format: "#,##0 ₸"
+    label: Остаток группы, ₸
+  - name: share
+    column: share
+    type: sum
+    format: "0.00%"
+    label: Доля в портфеле
+  - name: loans
+    column: loans
+    type: sum
+    format: "#,##0"
+    label: Кредитов, шт.

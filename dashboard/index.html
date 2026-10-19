@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Риск-сводка портфеля</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5.30.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0"></script>
+  <style>
+    body { margin: 0; background: #f6f7f8; color: #1f2933; font: 14px/1.45 -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    main { max-width: 1120px; margin: 0 auto; padding: 24px 16px 48px; }
+    h1 { font-size: 20px; margin: 0 0 4px; }
+    .sub { color: #5b6b78; margin: 0 0 20px; }
+    section { background: #fff; border: 1px solid #e3e7eb; border-radius: 6px; padding: 16px; margin-bottom: 16px; overflow-x: auto; }
+    h2 { font-size: 13px; font-weight: 600; color: #5b6b78; text-transform: uppercase; letter-spacing: .04em; margin: 0 0 12px; }
+    footer { color: #8a96a0; font-size: 12px; }
+    .error { color: #a8443a; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Риск-сводка кредитного портфеля</h1>
+  <p class="sub">Синтетический портфель, срезы на 01.09.2026 и 01.10.2026. Суммы в тенге по курсу на дату среза, без списанных кредитов</p>
+
+  <section><h2>Ключевые показатели</h2><div id="kpi"></div></section>
+  <section><h2>Динамика</h2><div id="dynamics"></div></section>
+  <section><h2>Отрасли</h2><div id="by_sector"></div></section>
+  <section><h2>Программы</h2><div id="by_program"></div></section>
+  <section><h2>Концентрация</h2><div id="top_groups"></div></section>
+  <section><h2>Качество данных</h2><div id="dq"></div></section>
+
+  <footer>Данные: dashboard/data/*.json, выгружены из вьюх reporting.* скриптом sql/30_export.sql. Спеки: dashboard/specs/*.vl.json</footer>
+</main>
+<script>
+  // Страница ничего не считает: только рисует спеки из specs/ на данных из data/.
+  const ruLocale = {decimal: ",", thousands: " ", grouping: [3], currency: ["", " ₸"]};
+  const charts = ["kpi", "dynamics", "by_sector", "by_program", "top_groups", "dq"];
+  for (const name of charts) {
+    vegaEmbed("#" + name, "specs/" + name + ".vl.json", {
+      actions: {export: true, source: true, compiled: false, editor: false},
+      formatLocale: ruLocale,
+      renderer: "svg"
+    }).catch(err => {
+      document.getElementById(name).innerHTML = '<p class="error">Не удалось нарисовать ' + name + ': ' + err.message + '</p>';
+    });
+  }
+</script>
+</body>
+</html>

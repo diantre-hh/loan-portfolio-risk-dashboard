@@ -1,0 +1,65 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Динамика портфеля, провизий и долей риска по датам среза. Источник: reporting.v_portfolio_metrics",
+  "data": {"url": "data/portfolio_metrics.json"},
+  "transform": [{"calculate": "timeFormat(toDate(datum.report_date), '%d.%m.%Y')", "as": "date_label"}],
+  "hconcat": [
+    {
+      "title": {"text": "Портфель и провизии, млрд ₸", "anchor": "start", "fontSize": 13},
+      "width": 260,
+      "height": 220,
+      "transform": [
+        {"fold": ["portfolio_kzt", "provisions_kzt"], "as": ["measure", "kzt"]},
+        {"calculate": "datum.kzt / 1e9", "as": "bn"},
+        {"calculate": "datum.measure == 'portfolio_kzt' ? 'Портфель' : 'Провизии'", "as": "measure_label"}
+      ],
+      "mark": {"type": "bar"},
+      "encoding": {
+        "x": {"field": "measure_label", "type": "nominal", "title": null, "axis": {"labelAngle": 0}},
+        "xOffset": {"field": "date_label"},
+        "y": {"field": "bn", "type": "quantitative", "title": null, "axis": {"format": ",.0f"}},
+        "color": {"field": "date_label", "title": "Срез", "scale": {"range": ["#b8c4ce", "#3d5a73"]}},
+        "tooltip": [
+          {"field": "date_label", "title": "Срез"},
+          {"field": "measure_label", "title": "Показатель"},
+          {"field": "bn", "title": "млрд ₸", "format": ",.2f"}
+        ]
+      }
+    },
+    {
+      "title": {"text": "Доли риска в портфеле", "anchor": "start", "fontSize": 13},
+      "width": 360,
+      "height": 220,
+      "transform": [
+        {"fold": ["par30_share", "par90_share", "npl_share", "top10_share"], "as": ["measure", "share"]},
+        {"calculate": "{'par30_share': 'PAR30', 'par90_share': 'PAR90', 'npl_share': 'NPL', 'top10_share': 'Топ-10 групп'}[datum.measure]", "as": "measure_label"}
+      ],
+      "layer": [
+        {
+          "mark": {"type": "bar"},
+          "encoding": {
+            "x": {"field": "measure_label", "type": "nominal", "title": null, "sort": ["PAR30", "PAR90", "NPL", "Топ-10 групп"], "axis": {"labelAngle": 0}},
+            "xOffset": {"field": "date_label"},
+            "y": {"field": "share", "type": "quantitative", "title": null, "axis": {"format": ".0%"}},
+            "color": {"field": "date_label", "title": "Срез", "scale": {"range": ["#b8c4ce", "#3d5a73"]}},
+            "tooltip": [
+              {"field": "date_label", "title": "Срез"},
+              {"field": "measure_label", "title": "Показатель"},
+              {"field": "share", "title": "Доля", "format": ".2%"}
+            ]
+          }
+        },
+        {
+          "mark": {"type": "text", "dy": -6, "fontSize": 10, "color": "#333"},
+          "encoding": {
+            "x": {"field": "measure_label", "type": "nominal", "sort": ["PAR30", "PAR90", "NPL", "Топ-10 групп"]},
+            "xOffset": {"field": "date_label"},
+            "y": {"field": "share", "type": "quantitative"},
+            "text": {"field": "share", "format": ".1%"}
+          }
+        }
+      ]
+    }
+  ],
+  "resolve": {"scale": {"color": "shared"}}
+}
