@@ -2,6 +2,8 @@
 
 Мини-проект: PostgreSQL 16 → семантическая модель YAML → дашборд на Vega-Lite. Синтетический портфель, срезы на 01.09.2026 и 01.10.2026
 
+**Демо:** https://diantre-hh.github.io/loan-portfolio-risk-dashboard/dashboard/ — та же статичная страница из `dashboard/`, на данных из `dashboard/data/*.json`
+
 ![Дашборд](docs/dashboard.png)
 
 ## Как запустить
